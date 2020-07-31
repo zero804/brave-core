@@ -1,7 +1,7 @@
 const path = require('path')
 const config = require('../lib/config')
 const util = require('../lib/util')
-const {braveTopLevelPaths, ethereumRemoteClientPaths} = require('./l10nUtil')
+const l10nUtil = require('./l10nUtil')
 
 const pushL10n = (options) => {
   const runOptions = { cwd: config.srcDir }
@@ -9,7 +9,7 @@ const pushL10n = (options) => {
   cmdOptions.cwd = config.braveCoreDir
   if (options.extension) {
     if (options.extension === 'ethereum-remote-client') {
-      ethereumRemoteClientPaths.forEach((sourceStringPath) => {
+      l10nUtil.getEthereumRemoteClientPaths().forEach((sourceStringPath) => {
         util.run('python', ['script/push-l10n.py', '--source_string_path', sourceStringPath], cmdOptions)
       })
       return
@@ -22,7 +22,7 @@ const pushL10n = (options) => {
     util.run('git', args, runOptions)
     args = ['checkout', '--', '*.grd*']
     util.run('git', args, runOptions)
-    braveTopLevelPaths.forEach((sourceStringPath) => {
+    l10nUtil.getBraveTopLevelPaths().forEach((sourceStringPath) => {
       if (!options.grd_path || sourceStringPath.endsWith(path.sep + options.grd_path))
         util.run('python', ['script/push-l10n.py', '--source_string_path', sourceStringPath], cmdOptions)
     })
