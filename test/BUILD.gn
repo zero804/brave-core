@@ -630,6 +630,7 @@ if (!is_android) {
       "//brave/browser/farbling:browser_tests",
       "//brave/browser/ui/tabs/test:browser_tests",
       "//brave/browser/widevine:browser_tests",
+      "//brave/renderer/test:browser_tests",
       "//media:test_support",
     ]
 
