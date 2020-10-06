@@ -69,7 +69,7 @@ class AdsBox extends React.Component<Props, State> {
   getAdsSubdivisions = () => {
     const {
       adsSubdivisionTargeting,
-      autoDetectedAdsSubdivisionTargeting
+      automaticallyDetectedAdsSubdivisionTargeting
     } = this.props.rewardsData.adsData
 
     let subdivisions: any = [
@@ -132,8 +132,8 @@ class AdsBox extends React.Component<Props, State> {
     }
 
     const subdivisionMap = new Map(subdivisions)
-    const subdivision = subdivisionMap.get(autoDetectedAdsSubdivisionTargeting) as string
-    if (subdivision !== '' && adsSubdivisionTargeting === 'AUTO') {
+    const subdivision = subdivisionMap.get(automaticallyDetectedAdsSubdivisionTargeting) as unknown
+    if (typeof subdivision === 'string' && subdivision && adsSubdivisionTargeting === 'AUTO') {
       subdivisions.unshift(['AUTO', getLocale('adsSubdivisionTargetingAutoDetectedAs', { adsSubdivisionTarget : subdivision })])
     } else {
       subdivisions.unshift(['AUTO', getLocale('adsSubdivisionTargetingAutoDetect')])
