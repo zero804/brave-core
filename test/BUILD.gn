@@ -258,9 +258,9 @@ test("brave_unit_tests") {
     ]
   }
 
-  if (is_linux) {
-    configs += [ "//brave/build/linux:linux_channel_names" ]
-  }
+  # if (is_linux) {
+  #  configs += [ "//brave/build/linux:linux_channel_names" ]
+  # }
 
   if (is_android) {
     deps += [
