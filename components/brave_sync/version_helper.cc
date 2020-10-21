@@ -16,15 +16,15 @@ namespace {
 
 using MajorToFull = std::map<int, base::Version>;
 const MajorToFull can_self_delete_from{
-    {17, base::Version({1, 17, 26})},  // Nightly which actually can self delete
+    {18, base::Version({1, 18, 2})},  // Nightly which actually can self delete
     // Below are for test, fill with actual when uplifted
-    {16, base::Version({1, 16, 100})},  // Beta & Dev
-    {15, base::Version({1, 15, 100})},  // Release
+    // {16, base::Version({1, 16, 100})},  // Beta & Dev
+    // {15, base::Version({1, 15, 100})},  // Release
 
     // For the future
-    {18, base::Version({1, 18, 0})},
     {19, base::Version({1, 19, 0})},
     {20, base::Version({1, 20, 0})},
+    {20, base::Version({1, 21, 0})},
 };
 
 }  // namespace
