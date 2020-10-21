@@ -213,11 +213,7 @@ void BraveSyncHandler::HandleDeleteDevice(const base::ListValue* args) {
   base::Value callback_id_arg(callback_id->Clone());
   auto* device_info_sync_service =
       DeviceInfoSyncServiceFactory::GetForProfile(profile_);
-  // TODO(AlexeyBarabash): do we need the callback here?
-  brave_sync::DeleteDevice(sync_service, device_info_sync_service, device_guid,
-                           base::BindOnce(&BraveSyncHandler::OnDeleteDeviceDone,
-                                          weak_ptr_factory_.GetWeakPtr(),
-                                          std::move(callback_id_arg)));
+  brave_sync::DeleteDevice(sync_service, device_info_sync_service, device_guid);
 }
 
 syncer::BraveProfileSyncService* BraveSyncHandler::GetSyncService() const {
@@ -241,10 +237,6 @@ syncer::LocalDeviceInfoProvider* BraveSyncHandler::GetLocalDeviceInfoProvider()
 }
 
 void BraveSyncHandler::OnResetDone(base::Value callback_id) {
-  ResolveJavascriptCallback(callback_id, base::Value(true));
-}
-
-void BraveSyncHandler::OnDeleteDeviceDone(base::Value callback_id) {
   ResolveJavascriptCallback(callback_id, base::Value(true));
 }
 
