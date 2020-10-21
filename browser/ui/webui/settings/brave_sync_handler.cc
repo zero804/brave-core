@@ -270,6 +270,7 @@ base::Value BraveSyncHandler::GetSyncDeviceList() {
 
     device_list.Append(std::move(device_value));
   }
+
   return device_list;
 }
 
