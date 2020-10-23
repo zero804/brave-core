@@ -14,7 +14,6 @@
 #include "brave/components/brave_sync/brave_sync_prefs.h"
 #include "brave/components/brave_sync/crypto/crypto.h"
 #include "brave/components/brave_sync/profile_sync_service_helper.h"
-#include "brave/components/brave_sync/version_helper.h"
 #include "brave/components/sync/driver/brave_sync_profile_sync_service.h"
 #include "chrome/browser/profiles/profile.h"
 #include "chrome/browser/sync/device_info_sync_service_factory.h"
@@ -255,10 +254,7 @@ base::Value BraveSyncHandler::GetSyncDeviceList() {
         local_device_info ? local_device_info->guid() == device->guid() : false;
     device_value.SetBoolKey("isCurrentDevice", is_current_device);
     device_value.SetStringKey("guid", device->guid());
-    device_value.SetBoolKey(
-        "supportsSelfDelete",
-        !is_current_device && brave_sync::RemoteDeviceSupportsSelfDelete(
-                                  device->chrome_version()));
+    device_value.SetBoolKey("supportsSelfDelete", !is_current_device);
 
     device_list.Append(std::move(device_value));
   }
