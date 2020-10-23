@@ -39,7 +39,7 @@ hooks = [
     'action': ['vpython3', 'script/download_rust_deps.py', '--platform', 'linux'],
   },
   {
-    # Download rust deps if necessary for macOS, Windows and Linux
+    # Download rust deps if necessary for macOS and Windows
     'name': 'download_rust_deps',
     'pattern': '.',
     'condition': 'not checkout_android and not checkout_linux',
