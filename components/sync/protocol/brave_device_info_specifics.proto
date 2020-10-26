@@ -13,5 +13,5 @@ option optimize_for = LITE_RUNTIME;
 package sync_pb;
 
 message BraveSpecificFields {
-  optional bool is_self_deleted_supported = 1;
+  optional bool is_self_delete_supported = 1;
 }
