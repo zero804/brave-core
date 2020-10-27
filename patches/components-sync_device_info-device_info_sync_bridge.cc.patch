@@ -1,7 +1,25 @@
 diff --git a/components/sync_device_info/device_info_sync_bridge.cc b/components/sync_device_info/device_info_sync_bridge.cc
-index a62efcfd6346bbf8a4c532c4c20c43ce8564bbb3..5eb45952feb462abf091e34803b045a54a273340 100644
+index a62efcfd6346bbf8a4c532c4c20c43ce8564bbb3..b0c3f3f6cca69661f60b51d3bdbc9133dc8b6692 100644
 --- a/components/sync_device_info/device_info_sync_bridge.cc
 +++ b/components/sync_device_info/device_info_sync_bridge.cc
+@@ -87,7 +87,7 @@ base::Optional<DeviceInfo::SharingInfo> SpecificsToSharingInfo(
+ // Converts DeviceInfoSpecifics into a freshly allocated DeviceInfo.
+ std::unique_ptr<DeviceInfo> SpecificsToModel(
+     const DeviceInfoSpecifics& specifics) {
+-  return std::make_unique<DeviceInfo>(
++  return std::make_unique<BRAVE_SPECIFICS_TO_MODEL_1>(
+       specifics.cache_guid(), specifics.client_name(),
+       specifics.chrome_version(), specifics.sync_user_agent(),
+       specifics.device_type(), specifics.signin_scoped_device_id(),
+@@ -96,7 +96,7 @@ std::unique_ptr<DeviceInfo> SpecificsToModel(
+       GetPulseIntervalFromSpecifics(specifics),
+       specifics.feature_fields().send_tab_to_self_receiving_enabled(),
+       SpecificsToSharingInfo(specifics),
+-      specifics.invalidation_fields().instance_id_token());
++      specifics.invalidation_fields().instance_id_token() BRAVE_SPECIFICS_TO_MODEL_2);
+ }
+ 
+ // Allocate a EntityData and copies |specifics| into it.
 @@ -157,6 +157,7 @@ std::unique_ptr<DeviceInfoSpecifics> MakeLocalDeviceSpecifics(
          info.fcm_registration_token());
    }

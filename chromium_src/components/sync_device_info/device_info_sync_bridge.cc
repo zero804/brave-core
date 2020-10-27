@@ -8,8 +8,17 @@
 #define BRAVE_MAKE_LOCAL_DEVICE_SPECIFICS \
   specifics->mutable_brave_fields()->set_is_self_delete_supported(true);
 
+#define BRAVE_SPECIFICS_TO_MODEL_1 BraveDeviceInfo
+
+#define BRAVE_SPECIFICS_TO_MODEL_2                             \
+    , specifics.has_brave_fields() &&                          \
+    specifics.brave_fields().has_is_self_delete_supported() && \
+    specifics.brave_fields().is_self_delete_supported()
+
 #include "../../../../components/sync_device_info/device_info_sync_bridge.cc"
 
+#undef BRAVE_SPECIFICS_TO_MODEL_1
+#undef BRAVE_SPECIFICS_TO_MODEL_2
 #undef BRAVE_MAKE_LOCAL_DEVICE_SPECIFICS
 
 #include "base/threading/sequenced_task_runner_handle.h"
@@ -20,21 +29,9 @@ namespace {
 
 std::unique_ptr<BraveDeviceInfo> BraveSpecificsToModel(
     const DeviceInfoSpecifics& specifics) {
-  // The code is duplicated from SpecificsToModel by intent to avoid use of
-  // extra patch
-  return std::make_unique<BraveDeviceInfo>(
-      specifics.cache_guid(), specifics.client_name(),
-      specifics.chrome_version(), specifics.sync_user_agent(),
-      specifics.device_type(), specifics.signin_scoped_device_id(),
-      specifics.manufacturer(), specifics.model(),
-      ProtoTimeToTime(specifics.last_updated_timestamp()),
-      GetPulseIntervalFromSpecifics(specifics),
-      specifics.feature_fields().send_tab_to_self_receiving_enabled(),
-      SpecificsToSharingInfo(specifics),
-      specifics.invalidation_fields().instance_id_token(),
-      specifics.has_brave_fields() &&
-          specifics.brave_fields().has_is_self_delete_supported() &&
-          specifics.brave_fields().is_self_delete_supported());
+  std::unique_ptr<DeviceInfo> device_info = SpecificsToModel(specifics);
+  return std::unique_ptr<BraveDeviceInfo>(
+      static_cast<BraveDeviceInfo*>(device_info.release()));
 }
 
 }  // namespace
