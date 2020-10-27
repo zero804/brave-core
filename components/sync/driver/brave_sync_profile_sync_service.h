@@ -16,18 +16,18 @@
 #include "components/sync/driver/profile_sync_service.h"
 #include "components/sync_device_info/device_info_tracker.h"
 
-class Profile;
-
 namespace syncer {
 
 class BraveSyncAuthManager;
 class DeviceInfoTracker;
 class LocalDeviceInfoProvider;
+class ProfileSyncServiceDelegate;
 
 class BraveProfileSyncService : public ProfileSyncService,
                                 public syncer::DeviceInfoTracker::Observer {
  public:
-  explicit BraveProfileSyncService(InitParams init_params, Profile* profile);
+  explicit BraveProfileSyncService(InitParams init_params,
+      ProfileSyncServiceDelegate* profile_service_delegate);
   ~BraveProfileSyncService() override;
 
   // SyncService implementation
@@ -62,6 +62,8 @@ class BraveProfileSyncService : public ProfileSyncService,
   syncer::LocalDeviceInfoProvider* local_device_info_provider_;
   ScopedObserver<syncer::DeviceInfoTracker, syncer::DeviceInfoTracker::Observer>
       device_info_observer_{this};
+
+  std::unique_ptr<ProfileSyncServiceDelegate> profile_service_delegate_;
 
   base::WeakPtrFactory<BraveProfileSyncService> weak_ptr_factory_;
 

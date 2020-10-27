@@ -12,8 +12,7 @@
 #include "base/task/post_task.h"
 #include "brave/components/brave_sync/crypto/crypto.h"
 #include "brave/components/sync/driver/brave_sync_auth_manager.h"
-#include "chrome/browser/profiles/profile_manager.h"
-#include "chrome/browser/sync/device_info_sync_service_factory.h"
+#include "brave/components/sync/driver/profile_sync_service_delegate.h"
 #include "components/prefs/pref_service.h"
 #include "components/sync_device_info/device_info_sync_service.h"
 #include "components/sync_device_info/device_info_tracker.h"
@@ -23,10 +22,12 @@
 
 namespace syncer {
 
-BraveProfileSyncService::BraveProfileSyncService(InitParams init_params,
-                                                 Profile* profile)
+BraveProfileSyncService::BraveProfileSyncService(
+    InitParams init_params,
+    ProfileSyncServiceDelegate* profile_service_delegate)
     : ProfileSyncService(std::move(init_params)),
       brave_sync_prefs_(sync_client_->GetPrefService()),
+      profile_service_delegate_(profile_service_delegate),
       weak_ptr_factory_(this) {
   brave_sync_prefs_change_registrar_.Init(sync_client_->GetPrefService());
   brave_sync_prefs_change_registrar_.Add(
@@ -39,14 +40,11 @@ BraveProfileSyncService::BraveProfileSyncService(InitParams init_params,
     brave_sync_prefs_.SetSyncV1Migrated(true);
   }
 
-  syncer::DeviceInfoSyncService* device_info_sync_service =
-      DeviceInfoSyncServiceFactory::GetForProfile(profile);
-  DCHECK(device_info_sync_service);
-
   local_device_info_provider_ =
-      device_info_sync_service->GetLocalDeviceInfoProvider();
+      profile_service_delegate_->GetDeviceInfoSyncService()
+                               ->GetLocalDeviceInfoProvider();
 
-  device_info_tracker_ = device_info_sync_service->GetDeviceInfoTracker();
+  device_info_tracker_ = profile_service_delegate_->GetDeviceInfoSyncService()->GetDeviceInfoTracker();
   DCHECK(device_info_tracker_);
 
   device_info_observer_.Add(device_info_tracker_);
