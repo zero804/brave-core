@@ -64,10 +64,9 @@ public class OnboardingPrefManager {
 
     private static final String GOOGLE = "Google";
     public static final String DUCKDUCKGO = "DuckDuckGo";
-    private static final String DUCKDUCKGOLITE = "DuckDuckGo Lite";
     private static final String QWANT = "Qwant";
     private static final String BING = "Bing";
-    private static final String STARTPAGE = "StartPage";
+    private static final String STARTPAGE = "Startpage";
     private static final String YAHOO = "Yahoo";
 
     private OnboardingPrefManager() {
@@ -246,7 +245,6 @@ public class OnboardingPrefManager {
             put(GOOGLE, SearchEngineEnum.GOOGLE);
             put(YAHOO, SearchEngineEnum.YAHOO);
             put(DUCKDUCKGO, SearchEngineEnum.DUCKDUCKGO);
-            put(DUCKDUCKGOLITE, SearchEngineEnum.DUCKDUCKGOLITE);
             put(QWANT, SearchEngineEnum.QWANT);
             put(BING, SearchEngineEnum.BING);
             put(STARTPAGE, SearchEngineEnum.STARTPAGE);
