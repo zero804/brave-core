@@ -20,19 +20,20 @@ class NotificationHandler : public NotificationHandler_ChromiumImpl {
     EXTENSION = 2,
     SEND_TAB_TO_SELF = 3,
     TRANSIENT = 4,
-    PERMISSION_REQUEST = 5,
+    // Deprecated
+    // PERMISSION_REQUEST = 5,
     SHARING = 6,
     ANNOUNCEMENT = 7,
     NEARBY_SHARE = 8,
-    NOTIFICATIONS_MUTED = 9,
-    BRAVE_ADS = 10,
-    MAX = BRAVE_ADS,
+    BRAVE_ADS = 9,
+    NOTIFICATIONS_MUTED = 10,
+    MAX = NOTIFICATIONS_MUTED,
   };
 
   // Make sure we know if the original enum gets changed.
   NotificationHandler() {
     DCHECK(static_cast<int>(NotificationHandler_ChromiumImpl::Type::MAX) + 1 ==
-           static_cast<int>(Type::BRAVE_ADS));
+           static_cast<int>(Type::MAX));
   }
 };
 
