@@ -59,15 +59,29 @@ content::EvalJsResult GetStorageValueInFrame(RenderFrameHost* host,
   return content::EvalJs(host, script);
 }
 
+content::EvalJsResult GetStorageInFrame(RenderFrameHost* host,
+                                        StorageType storage_type) {
+  std::string script = base::StringPrintf("%sStorage;", ToString(storage_type));
+  return content::EvalJs(host, script);
+}
+
+void AssertStorageEmptyInFrame(RenderFrameHost* frame) {
+  EXPECT_EQ(nullptr, GetStorageInFrame(frame, StorageType::Local));
+  EXPECT_EQ(nullptr, GetStorageInFrame(frame, StorageType::Session));
+}
+
+void AssertStorageEmptyInSubframes(WebContents* web_contents) {
+  RenderFrameHost* main_frame = web_contents->GetMainFrame();
+  AssertStorageEmptyInFrame(content::ChildFrameAt(main_frame, 0));
+  AssertStorageEmptyInFrame(content::ChildFrameAt(main_frame, 1));
+}
+
 }  // namespace
 
-class EphemeralStorageBrowserTest : public InProcessBrowserTest {
+class EphemeralStorageBaseBrowserTest : public InProcessBrowserTest {
  public:
-  EphemeralStorageBrowserTest()
-      : https_server_(net::EmbeddedTestServer::TYPE_HTTPS) {
-    scoped_feature_list_.InitAndEnableFeature(
-        blink::features::kBraveEphemeralStorage);
-  }
+  EphemeralStorageBaseBrowserTest()
+      : https_server_(net::EmbeddedTestServer::TYPE_HTTPS) {}
 
   void SetUpOnMainThread() override {
     InProcessBrowserTest::SetUpOnMainThread();
@@ -162,12 +176,18 @@ class EphemeralStorageBrowserTest : public InProcessBrowserTest {
   GURL c_site_ephemeral_storage_url_;
 
  private:
-  DISALLOW_COPY_AND_ASSIGN(EphemeralStorageBrowserTest);
+  DISALLOW_COPY_AND_ASSIGN(EphemeralStorageBaseBrowserTest);
+};
+
+class EphemeralStorageBrowserTest : public EphemeralStorageBaseBrowserTest {
+ public:
+  EphemeralStorageBrowserTest() {
+    scoped_feature_list_.InitAndEnableFeature(
+        blink::features::kBraveEphemeralStorage);
+  }
 };
 
 IN_PROC_BROWSER_TEST_F(EphemeralStorageBrowserTest, StorageIsPartitioned) {
-  AllowAllCookies();
-
   WebContents* first_party_tab = LoadURLInNewTab(b_site_ephemeral_storage_url_);
   WebContents* site_a_tab1 = LoadURLInNewTab(a_site_ephemeral_storage_url_);
   WebContents* site_a_tab2 = LoadURLInNewTab(a_site_ephemeral_storage_url_);
@@ -229,8 +249,6 @@ IN_PROC_BROWSER_TEST_F(EphemeralStorageBrowserTest, StorageIsPartitioned) {
 
 IN_PROC_BROWSER_TEST_F(EphemeralStorageBrowserTest,
                        NavigatingClearsEphemeralStorage) {
-  AllowAllCookies();
-
   ui_test_utils::NavigateToURL(browser(), a_site_ephemeral_storage_url_);
   auto* web_contents = browser()->tab_strip_model()->GetActiveWebContents();
 
@@ -261,8 +279,6 @@ IN_PROC_BROWSER_TEST_F(EphemeralStorageBrowserTest,
 
 IN_PROC_BROWSER_TEST_F(EphemeralStorageBrowserTest,
                        ClosingTabClearsEphemeralStorage) {
-  AllowAllCookies();
-
   WebContents* site_a_tab = LoadURLInNewTab(a_site_ephemeral_storage_url_);
   EXPECT_EQ(browser()->tab_strip_model()->count(), 2);
 
@@ -303,8 +319,6 @@ IN_PROC_BROWSER_TEST_F(EphemeralStorageBrowserTest,
 
 IN_PROC_BROWSER_TEST_F(EphemeralStorageBrowserTest,
                        ReloadDoesNotClearEphemeralStorage) {
-  AllowAllCookies();
-
   ui_test_utils::NavigateToURL(browser(), a_site_ephemeral_storage_url_);
   auto* web_contents = browser()->tab_strip_model()->GetActiveWebContents();
 
@@ -334,8 +348,6 @@ IN_PROC_BROWSER_TEST_F(EphemeralStorageBrowserTest,
 
 IN_PROC_BROWSER_TEST_F(EphemeralStorageBrowserTest,
                        EphemeralStorageDoesNotLeakBetweenProfiles) {
-  AllowAllCookies();
-
   ui_test_utils::NavigateToURL(browser(), a_site_ephemeral_storage_url_);
   auto* web_contents = browser()->tab_strip_model()->GetActiveWebContents();
 
@@ -383,4 +395,107 @@ IN_PROC_BROWSER_TEST_F(EphemeralStorageBrowserTest,
   EXPECT_EQ(nullptr, private_values.main_frame.session_storage);
   EXPECT_EQ(nullptr, private_values.iframe_1.session_storage);
   EXPECT_EQ(nullptr, private_values.iframe_2.session_storage);
+}
+
+IN_PROC_BROWSER_TEST_F(EphemeralStorageBrowserTest, ThirdPartyCookiesEnabled) {
+  AllowAllCookies();
+
+  ui_test_utils::NavigateToURL(browser(), b_site_ephemeral_storage_url_);
+  auto* web_contents = browser()->tab_strip_model()->GetActiveWebContents();
+  // We set a value in the page where all the frames are first-party.
+  SetValuesInFrames(web_contents, "b.com - first party", "from=b.com");
+
+  // The storage in the first-party iframes should still reflect the
+  // original value that was written in the non-ephemeral storage area.
+  ValuesFromFrames first_party_values = GetValuesFromFrames(web_contents);
+  EXPECT_EQ("b.com - first party", first_party_values.main_frame.local_storage);
+  EXPECT_EQ("b.com - first party", first_party_values.iframe_1.local_storage);
+  EXPECT_EQ("b.com - first party", first_party_values.iframe_2.local_storage);
+
+  EXPECT_EQ("b.com - first party",
+            first_party_values.main_frame.session_storage);
+  EXPECT_EQ("b.com - first party", first_party_values.iframe_1.session_storage);
+  EXPECT_EQ("b.com - first party", first_party_values.iframe_2.session_storage);
+
+  ui_test_utils::NavigateToURL(browser(), a_site_ephemeral_storage_url_);
+  auto* a_site_content = browser()->tab_strip_model()->GetActiveWebContents();
+
+  // If third-party cookies is enabled, site_a_tab should be able to access to
+  // non-ephemeral sotrages.
+  ValuesFromFrames site_a_tab_values = GetValuesFromFrames(a_site_content);
+  EXPECT_EQ(nullptr, site_a_tab_values.main_frame.local_storage);
+  EXPECT_EQ("b.com - first party", site_a_tab_values.iframe_1.local_storage);
+  EXPECT_EQ("b.com - first party", site_a_tab_values.iframe_2.local_storage);
+
+  EXPECT_EQ(nullptr, site_a_tab_values.main_frame.session_storage);
+  EXPECT_EQ("b.com - first party", site_a_tab_values.iframe_1.session_storage);
+  EXPECT_EQ("b.com - first party", site_a_tab_values.iframe_2.session_storage);
+}
+
+class EphemeralStorageDisabledBrowserTest
+    : public EphemeralStorageBaseBrowserTest {
+ public:
+  EphemeralStorageDisabledBrowserTest() {
+    scoped_feature_list_.InitAndDisableFeature(
+        blink::features::kBraveEphemeralStorage);
+  }
+};
+
+IN_PROC_BROWSER_TEST_F(EphemeralStorageDisabledBrowserTest,
+                       ThirdPartyCookiesEnabled) {
+  AllowAllCookies();
+
+  ui_test_utils::NavigateToURL(browser(), b_site_ephemeral_storage_url_);
+  auto* web_contents = browser()->tab_strip_model()->GetActiveWebContents();
+  // We set a value in the page where all the frames are first-party.
+  SetValuesInFrames(web_contents, "b.com - first party", "from=b.com");
+
+  ValuesFromFrames first_party_values = GetValuesFromFrames(web_contents);
+  EXPECT_EQ("b.com - first party", first_party_values.main_frame.local_storage);
+  EXPECT_EQ("b.com - first party", first_party_values.iframe_1.local_storage);
+  EXPECT_EQ("b.com - first party", first_party_values.iframe_2.local_storage);
+
+  EXPECT_EQ("b.com - first party",
+            first_party_values.main_frame.session_storage);
+  EXPECT_EQ("b.com - first party", first_party_values.iframe_1.session_storage);
+  EXPECT_EQ("b.com - first party", first_party_values.iframe_2.session_storage);
+
+  ui_test_utils::NavigateToURL(browser(), a_site_ephemeral_storage_url_);
+  auto* a_site_content = browser()->tab_strip_model()->GetActiveWebContents();
+
+  // If third-party cookies is enabled, site_a_tab should be able to access to
+  // non-ephemeral sotrages.
+  ValuesFromFrames site_a_tab_values = GetValuesFromFrames(a_site_content);
+  EXPECT_EQ(nullptr, site_a_tab_values.main_frame.local_storage);
+  EXPECT_EQ("b.com - first party", site_a_tab_values.iframe_1.local_storage);
+  EXPECT_EQ("b.com - first party", site_a_tab_values.iframe_2.local_storage);
+
+  EXPECT_EQ(nullptr, site_a_tab_values.main_frame.session_storage);
+  EXPECT_EQ("b.com - first party", site_a_tab_values.iframe_1.session_storage);
+  EXPECT_EQ("b.com - first party", site_a_tab_values.iframe_2.session_storage);
+}
+
+IN_PROC_BROWSER_TEST_F(EphemeralStorageDisabledBrowserTest,
+                       ThirdPartyCookiesDisabled) {
+  ui_test_utils::NavigateToURL(browser(), b_site_ephemeral_storage_url_);
+  auto* web_contents = browser()->tab_strip_model()->GetActiveWebContents();
+  // We set a value in the page where all the frames are first-party.
+  SetValuesInFrames(web_contents, "b.com - first party", "from=b.com");
+
+  ValuesFromFrames first_party_values = GetValuesFromFrames(web_contents);
+  EXPECT_EQ("b.com - first party", first_party_values.main_frame.local_storage);
+  EXPECT_EQ("b.com - first party", first_party_values.iframe_1.local_storage);
+  EXPECT_EQ("b.com - first party", first_party_values.iframe_2.local_storage);
+
+  EXPECT_EQ("b.com - first party",
+            first_party_values.main_frame.session_storage);
+  EXPECT_EQ("b.com - first party", first_party_values.iframe_1.session_storage);
+  EXPECT_EQ("b.com - first party", first_party_values.iframe_2.session_storage);
+
+  ui_test_utils::NavigateToURL(browser(), a_site_ephemeral_storage_url_);
+  auto* a_site_content = browser()->tab_strip_model()->GetActiveWebContents();
+
+  // If both ephemeral storage and third-party cookies disabled, third-party
+  // frames can not access to any dom storage.
+  AssertStorageEmptyInSubframes(a_site_content);
 }
