@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/notifications/notification_platform_bridge_mac.mm b/chrome/browser/notifications/notification_platform_bridge_mac.mm
-index 818a55960feddc8dd86717673f3164388afd9a0d..0bd414094c8c69ee478d56f6bb47e3a59d1f6b97 100644
+index 9e8fcb9f9f91cb33a60c22704619dbd02024a06e..d359fea0d6626802c2b1b7b09f46739bc114d1ca 100644
 --- a/chrome/browser/notifications/notification_platform_bridge_mac.mm
 +++ b/chrome/browser/notifications/notification_platform_bridge_mac.mm
-@@ -92,6 +92,7 @@ bool IsPersistentNotification(
+@@ -91,6 +91,7 @@ bool IsPersistentNotification(
  // an expensive call. Instead use NotificationPlatformBridgeMac::SupportsAlerts
  // which caches this value.
  bool SupportsAlertsImpl() {
@@ -10,7 +10,7 @@ index 818a55960feddc8dd86717673f3164388afd9a0d..0bd414094c8c69ee478d56f6bb47e3a5
    int32_t major, minor, bugfix;
    base::SysInfo::OperatingSystemVersionNumbers(&major, &minor, &bugfix);
    // Allow alerts on all versions except 10.15.0, 10.15.1 & 10.15.2.
-@@ -240,6 +241,7 @@ void NotificationPlatformBridgeMac::Display(
+@@ -239,6 +240,7 @@ void NotificationPlatformBridgeMac::Display(
    } else {
      NSUserNotification* toast = [builder buildUserNotification];
      [notification_center_ deliverNotification:toast];
