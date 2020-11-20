@@ -14,7 +14,7 @@ namespace blink {
 // static
 bool StorageController::CanAccessStorageArea(LocalFrame* frame,
                                              StorageArea::StorageType type) {
-  if (CanAccessStorageAreaWithoutEphemeral(frame, type))
+  if (CanAccessStorageAreaWithoutEphemeralStorage(frame, type))
     return true;
   if (frame && frame->GetDocument() && frame->GetDocument()->domWindow() &&
       frame->GetDocument()->domWindow()->IsCrossSiteSubframe())
@@ -24,6 +24,6 @@ bool StorageController::CanAccessStorageArea(LocalFrame* frame,
 
 }  // namespace blink
 
-#define CanAccessStorageArea CanAccessStorageAreaWithoutEphemeral
+#define CanAccessStorageArea CanAccessStorageAreaWithoutEphemeralStorage
 #include "../../../../../../../third_party/blink/renderer/modules/storage/storage_controller.cc"
-#undef CanAccessStorageAreaWithoutEphemeral
+#undef CanAccessStorageAreaWithoutEphemeralStorage

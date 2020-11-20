@@ -175,7 +175,7 @@ StorageArea* BraveDOMWindowStorage::sessionStorage(
   if (!storage)
     return nullptr;
 
-  if (StorageController::CanAccessStorageAreaWithoutEphemeral(
+  if (StorageController::CanAccessStorageAreaWithoutEphemeralStorage(
           window->GetFrame(), StorageArea::StorageType::kSessionStorage))
     return storage;
 
@@ -213,7 +213,7 @@ StorageArea* BraveDOMWindowStorage::localStorage(
   if (!storage)
     return nullptr;
 
-  if (StorageController::CanAccessStorageAreaWithoutEphemeral(
+  if (StorageController::CanAccessStorageAreaWithoutEphemeralStorage(
           window->GetFrame(), StorageArea::StorageType::kSessionStorage))
     return storage;
 
