@@ -13,25 +13,7 @@ node_js: 12
 
 cache:
   directories:
-    - $HOME/.npm
     - $HOME/.sonar/cache
-    - node_modules
-
-env:
-  - TEST_SUITE=tslint
-  - TEST_SUITE=build-storybook
-  - TEST_SUITE=test-unit
-  - TEST_SUITE=pep8
-
-before_install:
-  - pip install --user pycodestyle
-
-install:
-  - npm install
-
-script:
-  - npm run $TEST_SUITE
-  # - sonar-scanner
 
 addons:
   sonarcloud:
