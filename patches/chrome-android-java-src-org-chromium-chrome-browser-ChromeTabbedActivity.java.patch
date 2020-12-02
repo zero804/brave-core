@@ -1,5 +1,5 @@
 diff --git a/chrome/android/java/src/org/chromium/chrome/browser/ChromeTabbedActivity.java b/chrome/android/java/src/org/chromium/chrome/browser/ChromeTabbedActivity.java
-index c8b1a6ac7c4f9740a5fcb5a066878993fd64e272..676c5c20273ed6457edd90e6632ad92182c027b7 100644
+index 3ff9001b03f1b0b64a6b1501e7430395a4b47d33..57973be4a7cfe7d374e8810069a594ccbff0ab15 100644
 --- a/chrome/android/java/src/org/chromium/chrome/browser/ChromeTabbedActivity.java
 +++ b/chrome/android/java/src/org/chromium/chrome/browser/ChromeTabbedActivity.java
 @@ -186,7 +186,7 @@ import java.util.Locale;
@@ -29,7 +29,7 @@ index c8b1a6ac7c4f9740a5fcb5a066878993fd64e272..676c5c20273ed6457edd90e6632ad921
                  getMultiWindowModeStateDispatcher(), getTabModelSelector(), getToolbarManager(),
                  getWindow().getDecorView(), this, mOverviewModeBehaviorSupplier,
                  mBookmarkBridgeSupplier, getModalDialogManager());
-@@ -1674,10 +1674,10 @@ public class ChromeTabbedActivity extends ChromeActivity<ChromeActivityComponent
+@@ -1675,10 +1675,10 @@ public class ChromeTabbedActivity extends ChromeActivity<ChromeActivityComponent
                  }
              };
          }
@@ -42,7 +42,7 @@ index c8b1a6ac7c4f9740a5fcb5a066878993fd64e272..676c5c20273ed6457edd90e6632ad921
                          tabDelegateFactorySupplier, true, overviewNTPCreator,
                          AsyncTabParamsManagerSingleton.getInstance()));
      }
-@@ -2071,7 +2071,7 @@ public class ChromeTabbedActivity extends ChromeActivity<ChromeActivityComponent
+@@ -2072,7 +2072,7 @@ public class ChromeTabbedActivity extends ChromeActivity<ChromeActivityComponent
          }
      }
  
