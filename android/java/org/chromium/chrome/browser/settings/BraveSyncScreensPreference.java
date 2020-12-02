@@ -14,6 +14,7 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
@@ -22,6 +23,7 @@ import android.graphics.Color;
 import android.hardware.Camera;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.text.Editable;
 import android.text.SpannableString;
 import android.text.TextUtils;
@@ -66,6 +68,7 @@ import com.google.zxing.common.BitMatrix;
 
 import org.chromium.base.ApiCompatibilityUtils;
 import org.chromium.base.ContextUtils;
+import org.chromium.base.IntentUtils;
 import org.chromium.base.Log;
 import org.chromium.base.ThreadUtils;
 import org.chromium.base.task.PostTask;
@@ -82,9 +85,12 @@ import org.chromium.chrome.browser.settings.SettingsActivity;
 import org.chromium.chrome.browser.settings.SettingsLauncher;
 import org.chromium.chrome.browser.sync.BraveSyncDevices;
 import org.chromium.chrome.browser.sync.ProfileSyncService;
+import org.chromium.chrome.browser.sync.settings.SyncSettingsUtils;
+import org.chromium.chrome.browser.sync.settings.SyncSettingsUtils.SyncError;
 import org.chromium.chrome.browser.sync.settings.BraveManageSyncSettings;
 import org.chromium.content_public.browser.UiThreadTaskTraits;
 import org.chromium.ui.KeyboardVisibilityDelegate;
+import org.chromium.ui.UiUtils;
 import org.chromium.ui.base.DeviceFormFactor;
 
 import java.io.IOException;
@@ -141,6 +147,7 @@ public class BraveSyncScreensPreference extends BravePreferenceFragment
     private TextView mBraveSyncTextDevicesTitle;
     private TextView mBraveSyncWordCountTitle;
     private TextView mBraveSyncAddDeviceCodeWords;
+    private LinearLayout mBraveSyncBtnAndroidSyncSettings;
     private CameraSource mCameraSource;
     private CameraSourcePreview mCameraSourcePreview;
     private ListView mDevicesListView;
@@ -440,6 +447,15 @@ public class BraveSyncScreensPreference extends BravePreferenceFragment
         mBraveSyncWordCountTitle.setText(getString(R.string.brave_sync_word_count_text, 0));
         mBraveSyncAddDeviceCodeWords =
                 (TextView) getView().findViewById(R.id.brave_sync_add_device_code_words);
+
+        mBraveSyncBtnAndroidSyncSettings = (LinearLayout) getView().findViewById(R.id.brave_sync_btn_android_sync_settings);
+        if (null != mBraveSyncBtnAndroidSyncSettings) {
+            mBraveSyncBtnAndroidSyncSettings.setOnClickListener(this);
+        }
+        ImageView syncNotWorkingImage = (ImageView) getView().findViewById(R.id.brave_sync_image_not_working);
+        syncNotWorkingImage.setImageDrawable(UiUtils.getTintedDrawable(
+                 getActivity(), R.drawable.ic_sync_error_legacy_40dp, R.color.default_red));
+
         setMainSyncText();
         mCameraSourcePreview = (CameraSourcePreview) getView().findViewById(R.id.preview);
 
@@ -555,8 +571,15 @@ public class BraveSyncScreensPreference extends BravePreferenceFragment
                         && v != mUseCameraButton && v != mConfirmCodeWordsButton
                         && v != mMobileButton && v != mLaptopButton && v != mPasteButton
                         && v != mCopyButton && v != mShowCategoriesButton && v != mAddDeviceButton
-                        && v != mQRCodeButton && v != mCodeWordsButton))
+                        && v != mQRCodeButton && v != mCodeWordsButton
+                        && v != mBraveSyncBtnAndroidSyncSettings))
             return;
+
+        if (mBraveSyncBtnAndroidSyncSettings == v) {
+            IntentUtils.safeStartActivity(
+                    getActivity(), new Intent(Settings.ACTION_SYNC_SETTINGS));
+            return;
+        }
 
         if (mScanChainCodeButton == v) {
             setJoinExistingChainLayout();
@@ -859,6 +882,7 @@ public class BraveSyncScreensPreference extends BravePreferenceFragment
         } catch (RuntimeException e) {
             Log.e(TAG, "Could not start camera source.", e);
         }
+        setAppropriateView();
     }
 
     @Override
@@ -1242,10 +1266,26 @@ public class BraveSyncScreensPreference extends BravePreferenceFragment
       });
   }
 
+  @SyncError
+  private int getSyncError() {
+      @SyncError
+      int error = SyncSettingsUtils.getSyncError();
+      if (error == SyncError.SYNC_SETUP_INCOMPLETE/* && mIsFromSigninScreen*/) {
+          return SyncError.NO_ERROR;
+      }
+      return error;
+  }
+
   private void setSyncDoneLayout() {
       if (getBraveSyncWorker() == null) {
           assert false;
           return;
+      }
+
+      if(getSyncError() == SyncError.ANDROID_SYNC_DISABLED) {
+          mBraveSyncBtnAndroidSyncSettings.setVisibility(View.VISIBLE);
+      } else {
+          mBraveSyncBtnAndroidSyncSettings.setVisibility(View.GONE);
       }
 
       if (!deviceInfoObserverSet) {
