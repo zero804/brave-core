@@ -12,11 +12,15 @@
 #include "base/time/time.h"
 #include "components/sync/driver/sync_auth_manager.h"
 
+namespace signin {
+class BraveIdentityManager;
+}
+
 namespace syncer {
 
 class BraveSyncAuthManager : public SyncAuthManager {
  public:
-  BraveSyncAuthManager(signin::IdentityManager* identity_manager,
+  BraveSyncAuthManager(signin::BraveIdentityManager* identity_manager,
                        const AccountStateChangedCallback& account_state_changed,
                        const CredentialsChangedCallback& credentials_changed);
   ~BraveSyncAuthManager() override;
@@ -25,6 +29,9 @@ class BraveSyncAuthManager : public SyncAuthManager {
   void ResetKeys();
 
   void RequestAccessToken() override;
+
+  void RegisterForAuthNotifications() override;
+  bool IsActiveAccountInfoFullyLoaded() const override;
 
   // signin::IdentityManager::Observer implementation.
   void OnPrimaryAccountSet(

@@ -21,14 +21,16 @@ std::string AppendBraveServiceKeyHeaderString() {
 }  // namespace
 
 BraveSyncAuthManager::BraveSyncAuthManager(
-    signin::IdentityManager* identity_manager,
+    signin::BraveIdentityManager* identity_manager,
     const AccountStateChangedCallback& account_state_changed,
     const CredentialsChangedCallback& credentials_changed)
-    : SyncAuthManager(identity_manager,
+    : SyncAuthManager(nullptr,
                       account_state_changed,
                       credentials_changed) {}
 
-BraveSyncAuthManager::~BraveSyncAuthManager() {}
+BraveSyncAuthManager::~BraveSyncAuthManager() {
+  registered_for_auth_notifications_ = false;
+}
 
 void BraveSyncAuthManager::DeriveSigningKeys(const std::string& seed) {
   VLOG(1) << __func__;
@@ -64,6 +66,18 @@ void BraveSyncAuthManager::RequestAccessToken() {
   brave_sync::NetworkTimeHelper::GetInstance()->GetNetworkTime(
       base::BindOnce(&BraveSyncAuthManager::OnNetworkTimeFetched,
                      weak_ptr_factory_.GetWeakPtr()));
+}
+
+void BraveSyncAuthManager::RegisterForAuthNotifications() {
+  VLOG(1) << __func__;
+  registered_for_auth_notifications_ = true;
+  sync_account_ = DetermineAccountToUse();
+}
+
+bool BraveSyncAuthManager::IsActiveAccountInfoFullyLoaded() const {
+  // Returning false to avoid `StopImpl(CLEAR_DATA)` in
+  // `ProfileSyncService::Initialize()`
+  return false;
 }
 
 SyncAccountInfo BraveSyncAuthManager::DetermineAccountToUse() const {
