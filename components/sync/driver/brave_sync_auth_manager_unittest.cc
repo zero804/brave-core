@@ -12,7 +12,7 @@
 #include "base/test/task_environment.h"
 #include "brave/common/network_constants.h"
 #include "brave/components/brave_sync/network_time_helper.h"
-#include "components/signin/public/identity_manager/identity_test_environment.h"
+#include "brave/components/signin/public/identity_manager/brave_identity_manager.h"
 #include "components/sync/engine/sync_credentials.h"
 #include "services/network/test/test_url_loader_factory.h"
 #include "testing/gmock/include/gmock/gmock.h"
@@ -47,7 +47,8 @@ class BraveSyncAuthManagerTest : public testing::Test {
   using CredentialsChangedCallback =
       SyncAuthManager::CredentialsChangedCallback;
 
-  BraveSyncAuthManagerTest() : identity_env_(&test_url_loader_factory_) {}
+  BraveSyncAuthManagerTest()
+      : identity_manager_(new signin::BraveIdentityManager()) {}
 
   ~BraveSyncAuthManagerTest() override {}
 
@@ -55,8 +56,7 @@ class BraveSyncAuthManagerTest : public testing::Test {
       const AccountStateChangedCallback& account_state_changed,
       const CredentialsChangedCallback& credentials_changed) {
     return std::make_unique<BraveSyncAuthManager>(
-        identity_env_.identity_manager(), account_state_changed,
-        credentials_changed);
+        identity_manager_.get(), account_state_changed, credentials_changed);
   }
 
   void SetNetworkTime() {
@@ -67,7 +67,7 @@ class BraveSyncAuthManagerTest : public testing::Test {
  private:
   base::test::TaskEnvironment task_environment_;
   network::TestURLLoaderFactory test_url_loader_factory_;
-  signin::IdentityTestEnvironment identity_env_;
+  std::unique_ptr<signin::BraveIdentityManager> identity_manager_;
 };
 
 TEST_F(BraveSyncAuthManagerTest, IgnoresEventsIfNotRegistered) {
