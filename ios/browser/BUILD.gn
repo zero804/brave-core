@@ -25,6 +25,7 @@ source_set("browser") {
     "//base",
     "//brave/browser/sync",
     "//brave/chromium_src/ios/chrome/browser/prefs",
+    "//brave/components/signin/public/identity_manager",
     "//components/flags_ui",
     "//components/metrics_services_manager",
     "//components/variations/service",
