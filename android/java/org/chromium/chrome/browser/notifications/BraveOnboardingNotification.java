@@ -106,7 +106,7 @@ public class BraveOnboardingNotification extends BroadcastReceiver {
                 RetentionNotificationPublisher.backgroundNotificationAction(context, intent);
             }
         } else {
-            if (intent.getExtra(USE_CUSTOM_NOTIFICATION)) {
+            if (intent.getBooleanExtra(USE_CUSTOM_NOTIFICATION, false)) {
               showOnboardingDialog(braveActivity);
             } else {
               showOnboardingNotification(braveActivity);

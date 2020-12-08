@@ -97,7 +97,7 @@ public class BraveAdsSignupDialog {
         return BraveRewardsPreferences.getPrefAdsInBackgroundEnabled();
     }
 
-    private static void enqueueOnboardingNotification(Context context, useCustomNotification) {
+    private static void enqueueOnboardingNotification(Context context, boolean useCustomNotification) {
         if(!OnboardingPrefManager.getInstance().isOnboardingNotificationShown()) {
             AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
             Intent intent = new Intent(context, BraveOnboardingNotification.class);

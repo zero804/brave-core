@@ -33,8 +33,6 @@ class NotificationHelperMac
   // NotificationHelper impl
   bool ShouldShowNotifications() override;
 
-  bool ShowMyFirstAdNotification() override;
-
   bool CanShowBackgroundNotifications() const override;
 };
 

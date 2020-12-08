@@ -19,6 +19,7 @@
 #include "bat/ads/internal/client/client.h"
 #include "bat/ads/internal/database/tables/ad_events_database_table.h"
 #include "bat/ads/internal/logging.h"
+#include "bat/ads/pref_names.h"
 #include "bat/ads/result.h"
 
 #if defined(OS_ANDROID)
@@ -187,7 +188,7 @@ uint64_t AdNotifications::Count() const {
 
 #if defined(OS_ANDROID)
 void AdNotifications::RemoveAllAfterReboot() {
-  if (AdsClientHelper::Get()->GetBooleanPref(ads::prefs::kUseCustomNotifications)) {
+  if (AdsClientHelper::Get()->GetBooleanPref(prefs::kUseCustomNotifications)) {
     return;
   }
   database::table::AdEvents database_table;
@@ -215,7 +216,7 @@ void AdNotifications::RemoveAllAfterReboot() {
 }
 
 void AdNotifications::RemoveAllAfterUpdate() {
-  if (AdsClientHelper::Get()->GetBooleanPref(ads::prefs::kUseCustomNotifications)) {
+  if (AdsClientHelper::Get()->GetBooleanPref(prefs::kUseCustomNotifications)) {
     return;
   }
   const std::string current_version_code =

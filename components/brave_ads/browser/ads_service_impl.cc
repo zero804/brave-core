@@ -86,7 +86,6 @@
 #include "ui/message_center/public/cpp/notification.h"
 
 #if defined(OS_ANDROID)
-#include "brave/browser/notifications/brave_notification_platform_bridge_helper_android.h"
 #include "chrome/browser/android/service_tab_launcher.h"
 #include "chrome/browser/android/tab_android.h"
 #include "chrome/browser/ui/android/tab_model/tab_model_list.h"
@@ -1199,7 +1198,7 @@ void AdsServiceImpl::OnGetAdsHistory(
 }
 
 bool AdsServiceImpl::CanShowBackgroundNotifications() const {
-  if (AdsClientHelper::Get()->GetBooleanPref(ads::prefs::kUseCustomNotifications)) {
+  if (GetBooleanPref(ads::prefs::kUseCustomNotifications)) {
     return true;
   }
   return NotificationHelper::GetInstance()->CanShowBackgroundNotifications();
@@ -1632,7 +1631,8 @@ void AdsServiceImpl::MaybeShowMyFirstAdNotification() {
     return;
   }
 
-  if (!NotificationHelper::GetInstance()->ShowMyFirstAdNotification()) {
+  if (!NotificationHelper::GetInstance()->ShowMyFirstAdNotification(
+        GetBooleanPref(ads::prefs::kUseCustomNotifications))) {
     return;
   }
 
@@ -1716,16 +1716,15 @@ std::string AdsServiceImpl::LoadDataResourceAndDecompressIfNeeded(
 // types of notification.h
 void AdsServiceImpl::ShowNotification(
     const ads::AdNotificationInfo& ad_notification) {
-  auto notification;
-  if (AdsClientHelper::Get()->GetBooleanPref(ads::prefs::kUseCustomNotifications)) {
-    notification = CreateAdNotification(ad_notification);
+  if (GetBooleanPref(ads::prefs::kUseCustomNotifications)) {
+    auto notification = CreateAdNotification(ad_notification);
 
     std::unique_ptr<PlatformBridge> platform_bridge =
         std::make_unique<PlatformBridge>(profile_);
 
     platform_bridge->Display(profile_, notification);
   } else {
-    notification = CreateMessageCenterNotification(ad_notification);
+    auto notification = CreateMessageCenterNotification(ad_notification);
     display_service_->Display(NotificationHandler::Type::BRAVE_ADS,
         *notification, /*metadata=*/nullptr);
   }
@@ -1771,19 +1770,12 @@ bool AdsServiceImpl::ShouldShowNotifications() {
 
 void AdsServiceImpl::CloseNotification(
     const std::string& uuid) {
-  if (AdsClientHelper::Get()->GetBooleanPref(ads::prefs::kUseCustomNotifications)) {
+  if (GetBooleanPref(ads::prefs::kUseCustomNotifications)) {
     std::unique_ptr<PlatformBridge>
       platform_bridge = std::make_unique<PlatformBridge>(profile_);
     platform_bridge->Close(profile_, uuid);
   } else {
-#if defined(OS_ANDROID)
-  const std::string brave_ads_url_prefix = kBraveAdsUrlPrefix;
-  const GURL service_worker_scope =
-      GURL(brave_ads_url_prefix.substr(0, brave_ads_url_prefix.size() - 1));
-  BraveNotificationPlatformBridgeHelperAndroid::MaybeRegenerateNotification(
-      uuid, service_worker_scope);
-#endif
-  display_service_->Close(NotificationHandler::Type::BRAVE_ADS, uuid);
+    display_service_->Close(NotificationHandler::Type::BRAVE_ADS, uuid);
   }
 }
 

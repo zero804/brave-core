@@ -22,7 +22,7 @@ bool NotificationHelper::ShouldShowNotifications() {
   return true;
 }
 
-bool NotificationHelper::ShowMyFirstAdNotification() {
+bool NotificationHelper::ShowMyFirstAdNotification(bool use_custom_notifications) {
   return false;
 }
 

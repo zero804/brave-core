@@ -55,10 +55,6 @@ bool NotificationHelperMac::ShouldShowNotifications() {
   return true;
 }
 
-bool NotificationHelperMac::ShowMyFirstAdNotification() {
-  return false;
-}
-
 bool NotificationHelperMac::CanShowBackgroundNotifications() const {
   return true;
 }

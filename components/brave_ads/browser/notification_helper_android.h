@@ -36,7 +36,7 @@ class NotificationHelperAndroid
   // NotificationHelper impl
   bool ShouldShowNotifications() override;
 
-  bool ShowMyFirstAdNotification() override;
+  bool ShowMyFirstAdNotification(bool use_custom_notifications) override;
 
   bool CanShowBackgroundNotifications() const override;
 };

@@ -24,7 +24,7 @@ class NotificationHelper {
 
   virtual bool ShouldShowNotifications();
 
-  virtual bool ShowMyFirstAdNotification();
+  virtual bool ShowMyFirstAdNotification(bool use_custom_notifications);
 
   virtual bool CanShowBackgroundNotifications() const;
  protected:

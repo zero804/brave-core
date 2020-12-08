@@ -9,6 +9,7 @@
 
 #include "base/android/jni_string.h"
 #include "base/system/sys_info.h"
+#include "bat/ads/pref_names.h"
 #include "brave/browser/brave_ads/android/jni_headers/BraveAds_jni.h"
 #include "brave/browser/brave_ads/android/jni_headers/BraveAdsSignupDialog_jni.h"
 #include "brave/build/android/jni_headers/BraveNotificationSettingsBridge_jni.h"
@@ -47,13 +48,16 @@ bool NotificationHelperAndroid::ShouldShowNotifications() {
   return result;
 }
 
-bool NotificationHelperAndroid::ShowMyFirstAdNotification() {
+bool NotificationHelperAndroid::ShowMyFirstAdNotification(
+    bool use_custom_notifications) {
   if (!ShouldShowNotifications()) {
     return false;
   }
 
   JNIEnv* env = base::android::AttachCurrentThread();
-  Java_BraveAdsSignupDialog_enqueueOnboardingNotificationNative(env);
+  Java_BraveAdsSignupDialog_enqueueOnboardingNotificationNative(
+      env,
+      use_custom_notifications);
 
   return true;
 }
