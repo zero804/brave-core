@@ -16,6 +16,10 @@
 
 class Profile;
 
+namespace signin {
+  class IdentityManager;
+}  // namespace signin
+
 namespace syncer {
 
 class BraveSyncAuthManager;
@@ -49,11 +53,16 @@ class BraveProfileSyncService : public ProfileSyncService {
 
   void OnBraveSyncPrefsChanged(const std::string& path);
 
+  InitParams ReplaceIdentityManager(InitParams init_params);
+
   brave_sync::Prefs brave_sync_prefs_;
 
   PrefChangeRegistrar brave_sync_prefs_change_registrar_;
 
   std::unique_ptr<ProfileSyncServiceDelegate> profile_service_delegate_;
+
+  //signin::IdentityManager* brave_identity_manager_ = nullptr;
+  std::auto_ptr<signin::IdentityManager> brave_identity_manager_;
 
   base::WeakPtrFactory<BraveProfileSyncService> weak_ptr_factory_;
 

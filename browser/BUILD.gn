@@ -151,6 +151,8 @@ source_set("browser_process") {
     "//brave/components/p3a",
     "//brave/components/resources",
     "//brave/components/speedreader:buildflags",
+    "//brave/components/signin/internal/identity_manager",
+    "//brave/components/signin/public/identity_manager",
     "//brave/components/tor/buildflags",
     "//brave/components/weekly_storage",
     "//brave/services/network/public/cpp",

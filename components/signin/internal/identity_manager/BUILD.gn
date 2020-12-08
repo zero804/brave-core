@@ -1,0 +1,24 @@
+# Copyright (c) 2020 The Brave Authors. All rights reserved.
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this file,
+# You can obtain one at http://mozilla.org/MPL/2.0/.
+
+source_set("identity_manager") {
+  sources = [
+    "brave_account_fetcher_service.cc",
+    "brave_account_fetcher_service.h",
+
+    "brave_primary_account_manager.cc",#
+    "brave_primary_account_manager.h",#
+
+    "brave_profile_oauth2_token_service.cc", #
+    "brave_profile_oauth2_token_service.h", #
+  ]
+
+  public_deps = [
+    "//base",
+  ]
+
+  deps = []
+
+}

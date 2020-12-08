@@ -10,6 +10,7 @@
 
 #include "base/logging.h"
 #include "brave/components/brave_sync/crypto/crypto.h"
+#include "brave/components/signin/public/identity_manager/brave_identity_manager.h"
 #include "brave/components/sync/driver/brave_sync_auth_manager.h"
 #include "brave/components/sync/driver/profile_sync_service_delegate.h"
 #include "components/prefs/pref_service.h"
@@ -19,10 +20,18 @@ namespace syncer {
 BraveProfileSyncService::BraveProfileSyncService(
     InitParams init_params,
     std::unique_ptr<ProfileSyncServiceDelegate> profile_service_delegate)
-    : ProfileSyncService(std::move(init_params)),
+    : ProfileSyncService(
+      ReplaceIdentityManager(std::move(init_params))
+      //std::move(init_params)
+    ),
       brave_sync_prefs_(sync_client_->GetPrefService()),
       profile_service_delegate_(std::move(profile_service_delegate)),
       weak_ptr_factory_(this) {
+DLOG(ERROR) << "[BraveSync] " << __func__ << " identity_manager_="<<identity_manager_;
+  //const_cast<signin::IdentityManager*>(identity_manager_) = nullptr;
+  //identity_manager_ = nullptr;
+DLOG(ERROR) << "[BraveSync] " << __func__ << " brave_identity_manager_.get()="<<brave_identity_manager_.get();
+
   brave_sync_prefs_change_registrar_.Init(sync_client_->GetPrefService());
   brave_sync_prefs_change_registrar_.Add(
       brave_sync::Prefs::GetSeedPath(),
@@ -99,6 +108,17 @@ void BraveProfileSyncService::SuspendDeviceObserverForOwnReset() {
 
 void BraveProfileSyncService::ResumeDeviceObserver() {
   profile_service_delegate_->ResumeDeviceObserver();
+}
+
+ProfileSyncService::InitParams BraveProfileSyncService::ReplaceIdentityManager(
+    ProfileSyncService::InitParams init_params) {
+DLOG(ERROR) << "[BraveSync] " << __func__ << " 000 this="<<this;
+DLOG(ERROR) << "[BraveSync] " << __func__ << " init_params.identity_manager="<<init_params.identity_manager;
+  brave_identity_manager_.reset(new signin::BraveIdentityManager());
+DLOG(ERROR) << "[BraveSync] " << __func__ << " brave_identity_manager_.get()="<<brave_identity_manager_.get();
+
+  init_params.identity_manager = brave_identity_manager_.get();
+  return init_params;
 }
 
 }  // namespace syncer
