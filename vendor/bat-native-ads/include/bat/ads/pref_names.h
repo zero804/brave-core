@@ -14,6 +14,8 @@ extern const char kEnabled[];
 
 extern const char kShouldAllowConversionTracking[];
 
+extern const char kUseCustomNotifications[];
+
 extern const char kAdsPerHour[];
 extern const char kAdsPerDay[];
 
