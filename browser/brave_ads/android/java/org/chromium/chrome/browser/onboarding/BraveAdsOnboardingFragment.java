@@ -118,6 +118,7 @@ public class BraveAdsOnboardingFragment extends Fragment {
     }
 
     private void startCountdown() {
+        BraveOnboardingNotification.cancelOnboardingNotification(getActivity());
         if (countDownTimer != null) countDownTimer.cancel();
 
         progress = 0;
