@@ -1,4 +1,9 @@
 import { getLocale } from '../api/localeAPI'
+import {
+  addSiteCosmeticFilter,
+  removeSiteFilter,
+  removeAllFilters
+} from '../api/cosmeticFilterAPI'
 import shieldsPanelActions from '../actions/shieldsPanelActions'
 
 export let rule = {
@@ -84,6 +89,14 @@ export function onContextMenuClicked (info: chrome.contextMenus.OnClickData, tab
     case 'addBlockElement':
       query()
       break
+    case 'resetSiteFilterSettings': {
+      removeSiteFilter(rule.host)
+      break
+    }
+    case 'resetAllFilterSettings': {
+      removeAllFilters()
+      break
+    }
     default: {
       console.warn('[cosmeticFilterEvents] invalid context menu option: ${info.menuItemId}')
     }
@@ -113,4 +126,6 @@ export async function onSelectorReturned (response: any) {
       cssOrigin: 'user'
     })
   }
+
+  await addSiteCosmeticFilter(rule.host, rule.selector)
 }
