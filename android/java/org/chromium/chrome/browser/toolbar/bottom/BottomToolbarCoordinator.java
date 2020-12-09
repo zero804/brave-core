@@ -120,12 +120,6 @@ class BottomToolbarCoordinator implements View.OnLongClickListener {
         };
 
         final OnClickListener searchAcceleratorListener = v -> {
-            // Only switch to HomePage when overview is showing.
-            if (mLayoutStateProvider != null
-                    && mLayoutStateProvider.isLayoutVisible(LayoutType.TAB_SWITCHER)
-                    && mShowStartSurfaceCallable != null) {
-                mShowStartSurfaceCallable.get();
-            }
             setUrlBarFocusAction.onResult(OmniboxFocusReason.ACCELERATOR_TAP);
         };
 
