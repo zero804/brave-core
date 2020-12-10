@@ -188,7 +188,7 @@ uint64_t AdNotifications::Count() const {
 
 #if defined(OS_ANDROID)
 void AdNotifications::RemoveAllAfterReboot() {
-  if (AdsClientHelper::Get()->GetBooleanPref(prefs::kUseCustomNotifications)) {
+  if (brave::IsDevOrCanaryBuild()) {
     return;
   }
   database::table::AdEvents database_table;
@@ -216,7 +216,7 @@ void AdNotifications::RemoveAllAfterReboot() {
 }
 
 void AdNotifications::RemoveAllAfterUpdate() {
-  if (AdsClientHelper::Get()->GetBooleanPref(prefs::kUseCustomNotifications)) {
+  if (brave::IsDevOrCanaryBuild()) {
     return;
   }
   const std::string current_version_code =

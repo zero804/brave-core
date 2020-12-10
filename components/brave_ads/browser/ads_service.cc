@@ -35,9 +35,6 @@ void AdsService::RegisterProfilePrefs(
   registry->RegisterBooleanPref(
       prefs::kShouldShowMyFirstAdNotification, true);
 
-  registry->RegisterBooleanPref(
-      ads::prefs::kUseCustomNotifications, false);
-
   registry->RegisterIntegerPref(
       prefs::kSupportedCountryCodesLastSchemaVersion, 0);
 

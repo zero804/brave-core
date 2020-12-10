@@ -1198,9 +1198,10 @@ void AdsServiceImpl::OnGetAdsHistory(
 }
 
 bool AdsServiceImpl::CanShowBackgroundNotifications() const {
-  if (GetBooleanPref(ads::prefs::kUseCustomNotifications)) {
+  if (brave::IsDevOrCanaryBuild()) {
     return true;
   }
+
   return NotificationHelper::GetInstance()->CanShowBackgroundNotifications();
 }
 
@@ -1632,7 +1633,7 @@ void AdsServiceImpl::MaybeShowMyFirstAdNotification() {
   }
 
   if (!NotificationHelper::GetInstance()->ShowMyFirstAdNotification(
-        GetBooleanPref(ads::prefs::kUseCustomNotifications))) {
+      brave::IsDevOrCanaryBuild())) {
     return;
   }
 
@@ -1716,7 +1717,7 @@ std::string AdsServiceImpl::LoadDataResourceAndDecompressIfNeeded(
 // types of notification.h
 void AdsServiceImpl::ShowNotification(
     const ads::AdNotificationInfo& ad_notification) {
-  if (GetBooleanPref(ads::prefs::kUseCustomNotifications)) {
+  if (brave::IsDevOrCanaryBuild()) {
     auto notification = CreateAdNotification(ad_notification);
 
     std::unique_ptr<PlatformBridge> platform_bridge =
@@ -1770,7 +1771,7 @@ bool AdsServiceImpl::ShouldShowNotifications() {
 
 void AdsServiceImpl::CloseNotification(
     const std::string& uuid) {
-  if (GetBooleanPref(ads::prefs::kUseCustomNotifications)) {
+  if (brave::IsDevOrCanaryBuild()) {
     std::unique_ptr<PlatformBridge>
       platform_bridge = std::make_unique<PlatformBridge>(profile_);
     platform_bridge->Close(profile_, uuid);

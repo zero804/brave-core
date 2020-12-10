@@ -25,10 +25,6 @@ const char kAdsPerDay[] = "brave.brave_ads.ads_per_day";
 // Stores the idle threshold before checking if an ad can be served
 const char kIdleThreshold[] = "brave.brave_ads.idle_threshold";
 
-// Stores whether we should use custom notifications or not
-const char kUseCustomNotifications[] =
-  "brave.brave_ads.use_custom_notifications";
-
 // Stores whether Brave ads should allow subdivision ad targeting
 const char kShouldAllowAdsSubdivisionTargeting[] =
     "brave.brave_ads.should_allow_ads_subdivision_targeting";
