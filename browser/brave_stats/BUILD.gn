@@ -28,6 +28,7 @@ source_set("stats_updater") {
     "//brave/common:pref_names",
     "//brave/components/brave_referrals/buildflags",
     "//brave/components/brave_stats/browser",
+    "//brave/vendor/bat-native-ads",
     "//chrome/common",
     "//components/prefs",
     "//content/public/browser",

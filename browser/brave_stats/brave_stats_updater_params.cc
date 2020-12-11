@@ -10,6 +10,7 @@
 
 #include "base/strings/string_util.h"
 #include "base/time/time.h"
+#include "bat/ads/pref_names.h"
 #include "brave/common/pref_names.h"
 #include "brave/components/brave_referrals/common/pref_names.h"
 #include "brave/components/brave_stats/browser/brave_stats_updater_util.h"
@@ -68,6 +69,10 @@ std::string BraveStatsUpdaterParams::GetDateOfInstallationParam() const {
 
 std::string BraveStatsUpdaterParams::GetReferralCodeParam() const {
   return referral_promo_code_.empty() ? "none" : referral_promo_code_;
+}
+
+std::string BraveStatsUpdaterParams::GetAdsEnabledParam() const {
+  return BooleanToString(pref_service_->GetBoolean(ads::prefs::kEnabled));
 }
 
 void BraveStatsUpdaterParams::LoadPrefs() {
