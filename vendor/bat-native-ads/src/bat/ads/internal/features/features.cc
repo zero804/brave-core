@@ -24,7 +24,8 @@ const base::Feature kContextualAdsControl { "ContextualAdsControl",
     base::FEATURE_DISABLED_BY_DEFAULT };
 
 const base::Feature kTextClassificationModel { "TextClassificationModel",
-    base::FEATURE_ENABLED_BY_DEFAULT };
+    // base::FEATURE_ENABLED_BY_DEFAULT };
+    base::FEATURE_DISABLED_BY_DEFAULT };
 
 bool IsTextClassificationModelEnabled() {
   return base::FeatureList::IsEnabled(kTextClassificationModel);
@@ -43,7 +44,8 @@ bool IsPurchaseIntentModelEnabled() {
 }
 
 const base::Feature kEpsilonGreedyBandit { "EpsilonGreedyBandit",
-    base::FEATURE_DISABLED_BY_DEFAULT };
+    // base::FEATURE_DISABLED_BY_DEFAULT };
+    base::FEATURE_ENABLED_BY_DEFAULT };
 
 bool IsEpsilonGreedyBanditEnabled() {
   return base::FeatureList::IsEnabled(kEpsilonGreedyBandit);
