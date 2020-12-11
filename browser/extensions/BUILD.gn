@@ -1,6 +1,7 @@
 import("//brave/components/binance/browser/buildflags/buildflags.gni")
 import("//brave/components/gemini/browser/buildflags/buildflags.gni")
 import("//brave/components/crypto_dot_com/browser/buildflags/buildflags.gni")
+import("//brave/components/ftx/browser/buildflags/buildflags.gni")
 import("//brave/components/brave_rewards/browser/buildflags/buildflags.gni")
 import("//brave/components/brave_wallet/buildflags/buildflags.gni")
 import("//brave/components/brave_wayback_machine/buildflags/buildflags.gni")
@@ -140,6 +141,16 @@ source_set("extensions") {
     deps += [
       "//brave/components/gemini/browser",
       "//brave/components/ntp_widget_utils/browser",
+    ]
+  }
+
+  if (ftx_enabled) {
+    sources += [
+      "api/ftx_api.cc",
+      "api/ftx_api.h",
+    ]
+    deps += [
+      "//brave/components/ftx/browser",
     ]
   }
 
