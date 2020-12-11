@@ -144,7 +144,7 @@ public abstract class BraveActivity<C extends ChromeActivityComponent> extends C
         // Handle items replaced by Brave.
         if (id == R.id.info_menu_id && currentTab != null) {
             ShareDelegate shareDelegate = (ShareDelegate) getShareDelegateSupplier().get();
-            shareDelegate.share(currentTab, false);
+            shareDelegate.share(currentTab, false, ShareOrigin.OVERFLOW_MENU);
             return true;
         }
 

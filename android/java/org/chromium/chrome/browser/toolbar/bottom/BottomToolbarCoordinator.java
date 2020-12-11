@@ -329,7 +329,7 @@ class BottomToolbarCoordinator implements View.OnLongClickListener {
             }
 
             Tab tab = mTabProvider.get();
-            shareDelegate.share(tab, /*shareDirectly=*/false);
+            shareDelegate.share(tab, /*shareDirectly=*/false, ShareOrigin.TOP_TOOLBAR);
         };
 
         mShareButtonListenerSupplier.set(shareButtonListener);
